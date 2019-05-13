@@ -2,6 +2,7 @@
 #define __STATEMENT_H__
 #include "syshead.h"
 #include "interface.h"
+#include "data.h"
 typedef enum MetaCommandResult__{
     META_COMMAND_SUCCESS,
     META_COMMAND_UNRECOGNIZED_COMMAND
@@ -21,6 +22,7 @@ typedef enum StatementType__{
 
 typedef struct Statement__{
     StatementType_t type;
+    Row_t row_to_insert;
 }Statement_t;
 
 PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st);
