@@ -9,8 +9,14 @@ typedef enum MetaCommandResult__{
 }MetaCommandResult_t;
 
 
+typedef enum ExecuteResult__{
+    EXECUTE_SUCCESS,
+    EXECUTE_TABLE_FULL
+}ExecuteResult_t;
+
 typedef enum PrepareResult__{
     PREPARE_SUCCESS,
+    PREPARE_SYNTAX_ERROR,
     PREPARE_UNRECOGNIZED_STATEMENT
 }PrepareResult_t;
 
@@ -28,4 +34,6 @@ typedef struct Statement__{
 PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st);
 MetaCommandResult_t do_meta_command(InputBuffer_t *buf);
 void execute_statement(Statement_t *st);
+ExecuteResult_t execute_insert(Statement_t *s,Table_t *t);
+ExecuteResult_t execute_select(Statement_t *s,Table_t *t);
 #endif

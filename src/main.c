@@ -1,9 +1,12 @@
 #include "syshead.h"
 #include "interface.h"
 #include "statement.h"
+#include "data.h"
 int main(){
     InputBuffer_t *buf = new_input_buffer();
     Statement_t st;
+    Table_t *table = NULL;
+    table = new_table();
     while(true){
         print_prompt();
         read_input(buf);
@@ -20,12 +23,15 @@ int main(){
         switch(prepare_statement(buf,&st)){
             case PREPARE_SUCCESS:
                 break;
+            case PREPARE_SYNTAX_ERROR:
+                printf("Couldnt parse the statement %s\n",buf->buffer);
+                continue;
             case PREPARE_UNRECOGNIZED_STATEMENT:
                 printf("Urecognized keyword at start of %s\n",buf->buffer);
                 continue;
         }
 
-        execute_statement(&st);
+        execute_statement(&st,table);
         printf("Executed\n");
     }
 }
