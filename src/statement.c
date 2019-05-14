@@ -6,7 +6,7 @@ PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st){
     int args_assigned = 0;
     if(strncmp(buf->buffer,"insert",6) == 0){
         st->type = STATEMENT_INSERT;
-        args_assigned = sscanf(buf->buffer,"insert %d %s %s",&(st->row_to_insert.id),&(st->row_to_insert.username),&(st->row_to_insert.email));
+        args_assigned = sscanf(buf->buffer,"insert %d %s %s",&(st->row_to_insert.id),st->row_to_insert.username,st->row_to_insert.email);
         if(args_assigned < 3){
             return PREPARE_SYNTAX_ERROR;
         }
@@ -39,6 +39,7 @@ ExecuteResult_t execute_insert(Statement_t* statement, Table_t* table){
     }
 
     row_to_insert = &(statement->row_to_insert);
+    printf("inserting row %d\n",table->num_rows);
     serialize_row(row_to_insert,row_slot(table,table->num_rows));
     table->num_rows+=1;
 
@@ -67,6 +68,7 @@ ExecuteResult_t execute_statement(Statement_t *st,Table_t *table){
             break;
         default:
             printf("Dont know what this command does\n");
+            return EXIT_SUCCESS;
             break;
     }
 }

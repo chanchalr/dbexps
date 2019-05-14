@@ -23,12 +23,13 @@ void *row_slot(Table_t *table,uint32_t row_num){
 
     uint32_t row_offset = row_num % ROWS_PER_PAGE;
     uint32_t byte_offset = row_offset * ROW_SIZE;
+    printf("slot at %p\n",page+byte_offset);
     return page+byte_offset;
 
 }
 
 
-Table_t new_table(){
+Table_t * new_table(){
     Table_t *table;
     int i = 0;
     table = (Table_t *)malloc(sizeof(Table_t));

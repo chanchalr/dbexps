@@ -33,7 +33,7 @@ typedef struct Statement__{
 
 PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st);
 MetaCommandResult_t do_meta_command(InputBuffer_t *buf);
-void execute_statement(Statement_t *st);
+ExecuteResult_t execute_statement(Statement_t *st,Table_t *t);
 ExecuteResult_t execute_insert(Statement_t *s,Table_t *t);
 ExecuteResult_t execute_select(Statement_t *s,Table_t *t);
 #endif
