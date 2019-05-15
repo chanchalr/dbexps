@@ -13,16 +13,16 @@ typedef struct Row__{
 #define ID_SIZE         size_of_attr(Row_t, id)
 #define USERNAME_SIZE   size_of_attr(Row_t,username)
 #define EMAIL_SIZE      size_of_attr(Row_t,email)
-#define ROW_SIZE        ID_SIZE+USERNAME_SIZE+EMAIL_SIZE
+#define ROW_SIZE        (ID_SIZE+USERNAME_SIZE+EMAIL_SIZE)
 #define ID_OFFSET       0
-#define USERNAME_OFFSET ID_OFFSET+ID_SIZE
-#define EMAIL_OFFSET    USERNAME_OFFSET+USERNAME_SIZE
+#define USERNAME_OFFSET (ID_OFFSET+ID_SIZE)
+#define EMAIL_OFFSET    (USERNAME_OFFSET+USERNAME_SIZE)
 
 
 #define TABLE_MAX_PAGES  100
 #define PAGE_SIZE        4096
-#define ROWS_PER_PAGE    PAGE_SIZE/ROW_SIZE
-#define TABLE_MAX_ROWS   ROWS_PER_PAGE * TABLE_MAX_PAGES
+#define ROWS_PER_PAGE    ((PAGE_SIZE)/(ROW_SIZE))
+#define TABLE_MAX_ROWS   ((ROWS_PER_PAGE) * (TABLE_MAX_PAGES))
 typedef struct Table__{
     uint32_t num_rows;
     void *pages[TABLE_MAX_PAGES];
