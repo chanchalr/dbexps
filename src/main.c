@@ -2,16 +2,17 @@
 #include "interface.h"
 #include "statement.h"
 #include "data.h"
+#include "pager.h"
 int main(){
     InputBuffer_t *buf = new_input_buffer();
     Statement_t st;
     Table_t *table = NULL;
-    table = new_table();
+    table = db_open("database.db");
     while(true){
         print_prompt();
         read_input(buf);
         if(buf->buffer[0] == '.'){
-            switch(do_meta_command(buf)){
+            switch(do_meta_command(buf,table)){
                 case META_COMMAND_SUCCESS:
                     continue;
                 case META_COMMAND_UNRECOGNIZED_COMMAND:

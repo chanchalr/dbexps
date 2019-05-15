@@ -2,6 +2,7 @@
 #include "statement.h"
 #include "interface.h"
 #include "data.h"
+#include "pager.h"
 PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st){
     int args_assigned = 0;
     if(strncmp(buf->buffer,"insert",6) == 0){
@@ -20,9 +21,10 @@ PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st){
     return PREPARE_UNRECOGNIZED_STATEMENT;
 }
 
-MetaCommandResult_t do_meta_command(InputBuffer_t *buf){
+MetaCommandResult_t do_meta_command(InputBuffer_t *buf,Table_t *t){
     if(strcmp(buf->buffer,".exit") == 0){
         close_input_buffer(buf);
+        db_close(t);
         exit(EXIT_SUCCESS);
     }else{
         return META_COMMAND_UNRECOGNIZED_COMMAND;
@@ -39,7 +41,6 @@ ExecuteResult_t execute_insert(Statement_t* statement, Table_t* table){
     }
 
     row_to_insert = &(statement->row_to_insert);
-    printf("inserting row %d\n",table->num_rows);
     serialize_row(row_to_insert,row_slot(table,table->num_rows));
     table->num_rows+=1;
 

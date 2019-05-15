@@ -1,5 +1,6 @@
 #include "data.h"
 #include "syshead.h"
+#include "pager.h"
 
 void serialize_row(Row_t *src, void *dest){
     memcpy(dest+ID_OFFSET,&(src->id),ID_SIZE);
@@ -16,40 +17,55 @@ void deserialize_row(void *src,Row_t *dest){
 
 void *row_slot(Table_t *table,uint32_t row_num){
     uint32_t page_num = 0;
-    page_num=  (unsigned int) ((unsigned int)row_num/(unsigned int)ROWS_PER_PAGE);
-    printf("sizes id:%lu uname:%lu email:%lu row:%lu\n",ID_SIZE,USERNAME_SIZE,EMAIL_SIZE,ROW_SIZE);
-    void *page = table->pages[page_num];
-    if(page == NULL){
-        page = table->pages[page_num] = malloc(PAGE_SIZE);
-    }
+    page_num = row_num/ROWS_PER_PAGE;
+    void *page = get_page(table->pager,page_num);
 
     uint32_t row_offset = row_num % ROWS_PER_PAGE;
     uint32_t byte_offset = row_offset * ROW_SIZE;
-    printf("slot at %p row_offset:%u byte_offset:%u row_size:%lu row_num:%u,row_per_page:%lu,page_num:%u\n",page+byte_offset,row_offset,byte_offset,ROW_SIZE,row_num,ROWS_PER_PAGE,page_num);
     return page+byte_offset;
 
 }
 
 
-Table_t * new_table(){
-    Table_t *table;
-    int i = 0;
+Table_t *db_open(char *filename){
+    Table_t *table = NULL;
+    Pager_t *pager = NULL;
+    pager = pager_open(filename);
     table = (Table_t *)malloc(sizeof(Table_t));
-    for(i=0;i<TABLE_MAX_PAGES;i++){
-        table->pages[i] = NULL;
-    }
-    table->num_rows = 0;
+    table->num_rows = pager->file_length/(ROW_SIZE);
+    table->pager = pager;
     return table;
 
 }
 
-void free_table(Table_t *t){
-    int i = 0;
-    for(i=0;i<TABLE_MAX_PAGES;i++){
-        free(t->pages[i]);
+
+void db_close(Table_t *table){
+    uint32_t i = 0;
+    uint32_t  num_additional_rows = 0;
+    Pager_t *pager = table->pager;
+    uint32_t num_full_pages =  table->num_rows/(ROWS_PER_PAGE);
+    for(i =0;i<num_full_pages;i++){
+        if(pager->pages[i] == NULL){
+            continue;
+        }
+        pager_flush(pager,i,PAGE_SIZE);
+        free(pager->pages[i]);
+        pager->pages[i] =  NULL;
     }
-    free(t);
+    pager->pages[i] = NULL;
+    num_additional_rows = (table->num_rows % (ROWS_PER_PAGE));
+    if(num_additional_rows > 0){
+        pager_flush(pager,num_full_pages,num_additional_rows * ROW_SIZE);
+        free(pager->pages[num_full_pages]);
+        pager->pages[num_full_pages] = NULL;
+    }
+    close(pager->fd);
+    pager->fd = 0;
+    free(pager);
+    free(table);
+
 }
+
 
 void print_row(Row_t *row){
     printf("(%d, %s, %s)\n", row->id, row->username, row->email);
