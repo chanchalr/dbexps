@@ -6,8 +6,8 @@
 #define COLUMN_EMAIL_SIZE 255
 typedef struct Row__{
     uint32_t id;
-    char username[COLUMN_USERNAME_SIZE];
-    char email[COLUMN_EMAIL_SIZE];
+    char username[COLUMN_USERNAME_SIZE+1];
+    char email[COLUMN_EMAIL_SIZE+1];
 }Row_t;
 #define size_of_attr(Struct,attr) sizeof(((Struct *)0)->attr)
 //const uint32_t ID_SIZE         = size_of_attr(Row_t, id);

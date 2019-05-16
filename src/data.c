@@ -52,7 +52,7 @@ void db_close(Table_t *table){
         free(pager->pages[i]);
         pager->pages[i] =  NULL;
     }
-    pager->pages[i] = NULL;
+    //pager->pages[i] = NULL;
     num_additional_rows = (table->num_rows % (ROWS_PER_PAGE));
     if(num_additional_rows > 0){
         pager_flush(pager,num_full_pages,num_additional_rows * ROW_SIZE);

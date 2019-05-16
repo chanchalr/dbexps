@@ -3,9 +3,37 @@
 #include "interface.h"
 #include "data.h"
 #include "pager.h"
+PrepareResult_t  prepare_insert(InputBuffer_t *buf,Statement_t *st){
+    st->type = STATEMENT_INSERT;
+    char *keyword=NULL,*id_string=NULL,*username=NULL,*email=NULL;
+    int id;
+    keyword   = strtok(buf->buffer," ");
+    id_string = strtok(NULL," ");
+    username  = strtok(NULL," ");
+    email     = strtok(NULL," ");
+    if(strcmp(keyword,"insert") != 0){
+        return PREPARE_SYNTAX_ERROR;
+    }
+    if(id_string == NULL || username==NULL||email==NULL){
+        return PREPARE_SYNTAX_ERROR;
+    }
+    id = atoi(id_string);
+    if(strlen(email) > COLUMN_EMAIL_SIZE){
+        return PREPARE_STRING_TOO_LONG;
+    }
+
+    if(strlen(username) > COLUMN_USERNAME_SIZE){
+        return PREPARE_STRING_TOO_LONG;
+    }
+    st->row_to_insert.id  = id;
+    strcpy(st->row_to_insert.email,email);
+    strcpy(st->row_to_insert.username,username);
+    return PREPARE_SUCCESS;
+}
 PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st){
-    int args_assigned = 0;
     if(strncmp(buf->buffer,"insert",6) == 0){
+        return prepare_insert(buf,st);
+        /*
         st->type = STATEMENT_INSERT;
         args_assigned = sscanf(buf->buffer,"insert %d %s %s",&(st->row_to_insert.id),st->row_to_insert.username,st->row_to_insert.email);
         if(args_assigned < 3){
@@ -13,6 +41,7 @@ PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st){
         }
 
         return PREPARE_SUCCESS;
+        */
     }
     if(strncmp(buf->buffer,"select",6) == 0){
         st->type = STATEMENT_SELECT;
@@ -23,8 +52,8 @@ PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st){
 
 MetaCommandResult_t do_meta_command(InputBuffer_t *buf,Table_t *t){
     if(strcmp(buf->buffer,".exit") == 0){
-        close_input_buffer(buf);
         db_close(t);
+        close_input_buffer(buf);
         exit(EXIT_SUCCESS);
     }else{
         return META_COMMAND_UNRECOGNIZED_COMMAND;

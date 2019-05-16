@@ -17,6 +17,7 @@ typedef enum ExecuteResult__{
 typedef enum PrepareResult__{
     PREPARE_SUCCESS,
     PREPARE_SYNTAX_ERROR,
+    PREPARE_STRING_TOO_LONG,
     PREPARE_UNRECOGNIZED_STATEMENT
 }PrepareResult_t;
 
@@ -32,6 +33,7 @@ typedef struct Statement__{
 }Statement_t;
 
 PrepareResult_t  prepare_statement(InputBuffer_t *buf,Statement_t *st);
+PrepareResult_t  prepare_insert(InputBuffer_t *buf,Statement_t *st);
 MetaCommandResult_t do_meta_command(InputBuffer_t *buf,Table_t *t);
 ExecuteResult_t execute_statement(Statement_t *st,Table_t *t);
 ExecuteResult_t execute_insert(Statement_t *s,Table_t *t);

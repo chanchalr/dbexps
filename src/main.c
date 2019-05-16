@@ -24,6 +24,9 @@ int main(){
         switch(prepare_statement(buf,&st)){
             case PREPARE_SUCCESS:
                 break;
+            case PREPARE_STRING_TOO_LONG:
+                printf("input string too long\n");
+                break;
             case PREPARE_SYNTAX_ERROR:
                 printf("Couldnt parse the statement %s\n",buf->buffer);
                 continue;
