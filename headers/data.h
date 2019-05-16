@@ -28,11 +28,21 @@ typedef struct Table__{
     Pager_t *pager;
 }Table_t;
 
+typedef struct Cursor__{
+    Table_t *table;
+    uint32_t row_num;
+    bool     end_of_table;
+}Cursor_t;
+
 void serialize_row(Row_t *row,void *dst);
 void deserialize_row(void *sr,Row_t *dest);
 void *row_slot(Table_t *table,uint32_t row_num);
 Table_t * db_open(char *filename);
 void db_close(Table_t *t);
 void print_row(Row_t *row);
+Cursor_t *table_start(Table_t *table);
+Cursor_t *table_end(Table_t *table);
+void cursor_advance(Cursor_t *cursor);
+void * cursor_value(Cursor_t *c);
 #endif
 

@@ -66,7 +66,42 @@ void db_close(Table_t *table){
 
 }
 
-
 void print_row(Row_t *row){
     printf("(%d, %s, %s)\n", row->id, row->username, row->email);
 }
+Cursor_t *table_start(Table_t *t){
+    Cursor_t *c = NULL;
+    c = (Cursor_t *)malloc(sizeof(Cursor_t));
+    c->table = t;
+    c->row_num = 0;
+    c->end_of_table = (t->num_rows == 0);
+    return c;
+}
+
+Cursor_t *table_end(Table_t *t){
+    Cursor_t *c = NULL;
+    c = (Cursor_t *)malloc(sizeof(Cursor_t));
+    c->table = t;
+    c->row_num = t->num_rows;
+    c->end_of_table = true;
+    return c;
+}
+
+void cursor_advance(Cursor_t *c){
+    c->row_num += 1;
+    if(c->row_num >= c->table->num_rows){
+        c->end_of_table = true;
+    }
+}
+
+void * cursor_value(Cursor_t *c){
+    uint32_t row_num   = c->row_num;
+    uint32_t page_num  = row_num/(ROWS_PER_PAGE);
+    void *page = get_page(c->table->pager,page_num);
+    uint32_t row_offset = row_num % ROWS_PER_PAGE;
+    uint32_t byte_offset = row_offset * ROW_SIZE;
+    return page+byte_offset;
+}
+
+
+

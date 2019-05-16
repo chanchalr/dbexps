@@ -64,25 +64,35 @@ MetaCommandResult_t do_meta_command(InputBuffer_t *buf,Table_t *t){
 
 ExecuteResult_t execute_insert(Statement_t* statement, Table_t* table){
     Row_t *row_to_insert;
+    Cursor_t *c = NULL;
+    c= table_end(table);
 
     if(table->num_rows >= TABLE_MAX_PAGES){
         return EXECUTE_TABLE_FULL;
     }
 
     row_to_insert = &(statement->row_to_insert);
-    serialize_row(row_to_insert,row_slot(table,table->num_rows));
+    serialize_row(row_to_insert,cursor_value(c));
     table->num_rows+=1;
-
+    free(c);
     return EXECUTE_SUCCESS;
 }
 
 ExecuteResult_t execute_select(Statement_t *statement,Table_t *table){
     Row_t row;
-    uint32_t i = 0;
-    for(i=0;i<table->num_rows;i++){
+    Cursor_t *c;
+    /*for(i=0;i<table->num_rows;i++){
         deserialize_row(row_slot(table,i),&row);
         print_row(&row);
+    }*/
+
+    c = table_start(table);
+    while(!(c->end_of_table)){
+        deserialize_row(cursor_value(c),&row);
+        print_row(&row);
+        cursor_advance(c);
     }
+    free(c);
     return EXECUTE_SUCCESS;
 }
 
