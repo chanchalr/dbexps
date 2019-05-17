@@ -63,18 +63,16 @@ MetaCommandResult_t do_meta_command(InputBuffer_t *buf,Table_t *t){
 
 
 ExecuteResult_t execute_insert(Statement_t* statement, Table_t* table){
-    Row_t *row_to_insert;
+    void *node = get_page(table->pager,table->root_page_num);
+    Row_t *row= NULL;
     Cursor_t *c = NULL;
-    c= table_end(table);
-
-    if(table->num_rows >= TABLE_MAX_PAGES){
+    if((*leaf_node_num_cells(node) >= LEAF_NODE_MAX_CELLS)){
         return EXECUTE_TABLE_FULL;
     }
+    c = table_end(table);
 
-    row_to_insert = &(statement->row_to_insert);
-    serialize_row(row_to_insert,cursor_value(c));
-    table->num_rows+=1;
-    free(c);
+    row = &(statement->row_to_insert);
+    leaf_node_insert(c,row->id,row);
     return EXECUTE_SUCCESS;
 }
 

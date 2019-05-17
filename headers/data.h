@@ -5,16 +5,15 @@
 #include "tree.h"
 
 #define PAGE_SIZE        4096
-#define ROWS_PER_PAGE    ((PAGE_SIZE)/(ROW_SIZE))
-#define TABLE_MAX_ROWS   ((ROWS_PER_PAGE) * (TABLE_MAX_PAGES))
 typedef struct Table__{
-    uint32_t num_rows;
     Pager_t *pager;
+    uint32_t root_page_num;
 }Table_t;
 
 typedef struct Cursor__{
     Table_t *table;
-    uint32_t row_num;
+    uint32_t page_num;
+    uint32_t cell_num;
     bool     end_of_table;
 }Cursor_t;
 
@@ -28,5 +27,6 @@ Cursor_t *table_start(Table_t *table);
 Cursor_t *table_end(Table_t *table);
 void cursor_advance(Cursor_t *cursor);
 void * cursor_value(Cursor_t *c);
+void leaf_node_insert(Cursor_t *c,uint32_t key, Row_t *value);
 #endif
 

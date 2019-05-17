@@ -15,6 +15,12 @@ Pager_t *pager_open(char *filename){
     pager = (Pager_t *)malloc(sizeof(Pager_t));
     pager->file_length = file_length;
     pager->fd = fd;
+
+    pager->num_pages = (file_length)/(PAGE_SIZE);
+    if(file_length % PAGE_SIZE != 0) {
+        printf("DB file size not multiple of %d corruption",(PAGE_SIZE));
+        exit(EXIT_FAILURE);
+    }
     for(i=0;i<TABLE_MAX_PAGES;i++){
         pager->pages[i] = NULL;
     }
@@ -45,11 +51,14 @@ void *get_page(Pager_t *pager,uint32_t page_num){
             }
         }
         pager->pages[page_num] = page;
+        if(page_num >= pager->num_pages){
+            pager->num_pages += 1;
+        }
     }
     return pager->pages[page_num];
 }
 
-void pager_flush(Pager_t *pager,uint32_t page_num,uint32_t size){
+void pager_flush(Pager_t *pager,uint32_t page_num){
     off_t offset = 0 ;
     ssize_t bytes_written = 0;
     if(pager->pages[page_num] == NULL){
@@ -61,7 +70,7 @@ void pager_flush(Pager_t *pager,uint32_t page_num,uint32_t size){
         printf("Error seeking %s\n",strerror(errno));
         exit(EXIT_FAILURE);
     }
-    bytes_written = write(pager->fd,pager->pages[page_num],size);
+    bytes_written = write(pager->fd,pager->pages[page_num],PAGE_SIZE);
     if(bytes_written == -1){
         printf("Error writing %s\n",strerror(errno));
         exit(EXIT_FAILURE);
