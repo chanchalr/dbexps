@@ -3,6 +3,7 @@
 #include "interface.h"
 #include "data.h"
 #include "pager.h"
+#include "tree.h"
 PrepareResult_t  prepare_insert(InputBuffer_t *buf,Statement_t *st){
     st->type = STATEMENT_INSERT;
     char *keyword=NULL,*id_string=NULL,*username=NULL,*email=NULL;
@@ -55,9 +56,14 @@ MetaCommandResult_t do_meta_command(InputBuffer_t *buf,Table_t *t){
         db_close(t);
         close_input_buffer(buf);
         exit(EXIT_SUCCESS);
+    }else if(strcmp(buf->buffer,".btree") == 0){
+        printf("Tree:\n");
+        print_leaf_node(get_page(t->pager,0));
+        return META_COMMAND_SUCCESS;
     }else{
         return META_COMMAND_UNRECOGNIZED_COMMAND;
     }
+    return META_COMMAND_SUCCESS;
 }
 
 

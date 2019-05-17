@@ -30,7 +30,7 @@ typedef enum  NodeType__{
 #define PARENT_POINTER_OFFSET   (IS_ROOT_OFFSET+IS_ROOT_SIZE)
 #define COMMON_NODE_HEADER_SIZE (NODE_TYPE_SIZE+IS_ROOT_SIZE+PARENT_POINTER_SIZE)
 
-#define LEAF_NODE_NUM_CELL_SIZE   sizeof(uint8_t)
+#define LEAF_NODE_NUM_CELL_SIZE   sizeof(uint32_t)
 #define LEAF_NODE_NUM_CELL_OFFSET COMMON_NODE_HEADER_SIZE
 #define LEAF_NODE_HEADER_SIZE     (COMMON_NODE_HEADER_SIZE + LEAF_NODE_NUM_CELL_SIZE)
 
@@ -49,4 +49,5 @@ void * leaf_node_cell(void *node,uint32_t cell_num);
 uint32_t *leaf_node_key(void *node,uint32_t cell_num);
 void * leaf_node_value(void *node,uint32_t cell_num);
 void initialize_leaf_node(void* node);
+void print_leaf_node(void *node);
 #endif
