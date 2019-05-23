@@ -93,6 +93,19 @@ Cursor_t *table_end(Table_t *t){
     return c;
 }
 
+Cursor_t *table_find(Table_t *t,uint32_t key){
+    uint32_t root_page_num = t->root_page_num;
+    void *root_page = get_page(t->pager,root_page_num);
+    if(get_node_type(root_page) == NODE_LEAF){
+        return leaf_node_find(t,root_page_num,key);
+
+    }else{
+        printf("Internal node search not yet done\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+
 void cursor_advance(Cursor_t *c){
     void *page = get_page(c->table->pager,c->page_num);
     c->cell_num += 1;

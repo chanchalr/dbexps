@@ -11,6 +11,7 @@ typedef enum MetaCommandResult__{
 
 typedef enum ExecuteResult__{
     EXECUTE_SUCCESS,
+    EXECUTE_DUPLICATE_KEY,
     EXECUTE_TABLE_FULL
 }ExecuteResult_t;
 

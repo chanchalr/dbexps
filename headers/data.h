@@ -25,8 +25,10 @@ void db_close(Table_t *t);
 void print_row(Row_t *row);
 Cursor_t *table_start(Table_t *table);
 Cursor_t *table_end(Table_t *table);
+Cursor_t *table_find(Table_t *t,uint32_t key_to_insert);
 void cursor_advance(Cursor_t *cursor);
 void * cursor_value(Cursor_t *c);
 void leaf_node_insert(Cursor_t *c,uint32_t key, Row_t *value);
+Cursor_t* leaf_node_find(Table_t* table, uint32_t page_num, uint32_t key);
 #endif
 
