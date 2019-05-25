@@ -26,6 +26,9 @@ Pager_t *pager_open(char *filename){
     }
     return pager;
 }
+uint32_t get_unused_page(Pager_t *pager){
+    return pager->num_pages;
+}
 
 void *get_page(Pager_t *pager,uint32_t page_num){
     void *page = NULL;

@@ -12,4 +12,5 @@ typedef struct  Pager__{
 Pager_t *pager_open(char *filename);
 void *get_page(Pager_t *pager,uint32_t page_num);
 void pager_flush(Pager_t *pager,uint32_t page_num);
+uint32_t get_unused_page(Pager_t *page);
 #endif

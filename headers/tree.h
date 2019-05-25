@@ -43,6 +43,28 @@ typedef enum  NodeType__{
 #define LEAF_NODE_SPACE_FOR_CELLS (PAGE_SIZE-LEAF_NODE_HEADER_SIZE)
 #define LEAF_NODE_MAX_CELLS       (LEAF_NODE_SPACE_FOR_CELLS/LEAF_NODE_CELL_SIZE)
 
+#define LEAF_NODE_RIGHT_SPLIT_COUNT  ((LEAF_NODE_MAX_CELLS + 1) / 2)
+#define LEAF_NODE_LEFT_SPLIT_COUNT   ((LEAF_NODE_MAX_CELLS + 1) - LEAF_NODE_RIGHT_SPLIT_COUNT)
+
+
+
+/**
+*
+*  Internal root structure
+*
+**/
+
+#define INTERNAL_NODE_NUM_KEYS_SIZE              sizeof(uint32_t)
+#define INTERNAL_NODE_NUM_KEYS_OFFSET            COMMON_NODE_HEADER_SIZE
+#define INTERNAL_NODE_RIGHT_CHILD_SIZE           sizeof(uint32_t)
+#define INTERNAL_NODE_RIGHT_CHILD_OFFSET         (INTERNAL_NODE_NUM_KEYS_OFFSET + INTERNAL_NODE_NUM_KEYS_SIZE)
+#define INTERNAL_NODE_HEADER_SIZE                (COMMON_NODE_HEADER_SIZE+INTERNAL_NODE_NUM_KEYS_SIZE+INTERNAL_NODE_RIGHT_CHILD_SIZE)
+
+
+#define INTERNAL_NODE_KEY_SIZE    sizeof(uint32_t)
+#define INTERNAL_NODE_CHILD_SIZE  sizeof(uint32_t)
+#define INTERNAL_NODE_CELL_SIZE   (INTERNAL_NODE_CHILD_SIZE+INTERNAL_NODE_KEY_SIZE)
+
 
 uint32_t * leaf_node_num_cells(void *node);
 void * leaf_node_cell(void *node,uint32_t cell_num);
@@ -52,4 +74,12 @@ void initialize_leaf_node(void* node);
 void print_leaf_node(void *node);
 NodeType_t get_node_type(void *node);
 void set_node_type(void *node,NodeType_t type);
+bool is_node_root(void *node);
+void set_node_root(void *node,bool is_root);
+uint32_t *internal_node_key(void *node,uint32_t cell_num);
+uint32_t *internal_node_num_keys(void *node);
+uint32_t *internal_node_right_child(void *node);
+uint32_t *internal_node_cell(void *node,uint32_t cell_num);
+uint32_t *internal_node_child(void *node,uint32_t cell_num);
+uint32_t get_node_max_key(void* node);
 #endif

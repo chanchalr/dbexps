@@ -29,6 +29,8 @@ Cursor_t *table_find(Table_t *t,uint32_t key_to_insert);
 void cursor_advance(Cursor_t *cursor);
 void * cursor_value(Cursor_t *c);
 void leaf_node_insert(Cursor_t *c,uint32_t key, Row_t *value);
+void leaf_node_split_and_insert(Cursor_t *c,uint32_t key,Row_t *value);
 Cursor_t* leaf_node_find(Table_t* table, uint32_t page_num, uint32_t key);
+void create_new_root(Table_t *t,uint32_t new_page_num);
 #endif
 
